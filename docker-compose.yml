@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+  movie-server:
+    container_name: movie-server
+    build:
+      context: .
+      dockerfile: Dockerfile
