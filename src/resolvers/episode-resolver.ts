@@ -14,9 +14,9 @@ export class EpisodeResolver {
         @Arg('isReleased') isReleased: boolean,
         @Arg('releaseDate') releaseDate: string,
         @Arg('duration') duration: string,
+        @Arg('tvShowId') tvShowId: number,
         @Arg('description') description: string,
     ): Promise<Episode> {
-
 
         const episode = new Episode({
             name,          
@@ -24,9 +24,11 @@ export class EpisodeResolver {
             releaseDate,          
             duration,
             description,
+            tvShowId,
             createdAt: new Date(),
             updatedAt: new Date()
         });
+        
         await episode.save();
 
         return episode;
