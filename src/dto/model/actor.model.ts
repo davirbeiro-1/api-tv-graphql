@@ -1,9 +1,11 @@
-import { Column, Model, Table} from 'sequelize-typescript';
+import { BelongsToMany, Column, Model, Table} from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { TvShowActor } from './tv-show-actor.model';
+import { TvShow } from './tv-show.model';
 
 @Table
 @ObjectType()
-export class Episode extends Model{
+export class Actor extends Model{
   @Field(() => ID)
   @Column({ primaryKey: true, autoIncrement: true })
   id: number;
@@ -15,19 +17,10 @@ export class Episode extends Model{
 
   @Field()
   @Column
-  isReleased: boolean;
+  age: string;
 
-  @Field()
-  @Column
-  releaseDate: string;
-
-  @Field()
-  @Column
-  duration: string;
-
-  @Field()
-  @Column
-  description: string;
+  @BelongsToMany(() => TvShow, () => TvShowActor)
+  tvShows: TvShow[];
 
   @Field(() => Date)
   @Column({ field: 'created_at' })

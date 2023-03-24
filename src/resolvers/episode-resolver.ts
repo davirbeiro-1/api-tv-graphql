@@ -1,5 +1,5 @@
 import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
-import { Episode } from '../dto/model/episode-model';
+import { Episode } from '../dto/model/episode.model';
 
 @Resolver()
 export class EpisodeResolver {

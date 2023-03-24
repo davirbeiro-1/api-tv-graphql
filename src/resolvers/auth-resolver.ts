@@ -2,7 +2,7 @@ import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '../dto/model/user-model';
-import { LoginResponse } from '../dto/model/login-model';
+import { LoginResponse } from '../dto/model/login.model';
 
 @Resolver()
 export class AuthResolver {

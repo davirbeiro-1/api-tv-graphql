@@ -1,5 +1,5 @@
 import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
-import { Actor } from '../dto/model/actor-model';
+import { Actor } from '../dto/model/actor.model';
 
 @Resolver()
 export class ActorResolver {
