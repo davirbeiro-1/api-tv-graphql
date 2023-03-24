@@ -1,22 +1,37 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { CreateUserInput } from "../dto/input/create-user-input";
-import { UserModel } from "../dto/models/user-model";
+import bcrypt from 'bcrypt'
+import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
+import { User } from '../dto/model/user-model';
+import { Context } from '../types/context';
 
 @Resolver()
 export class UserResolver {
+  @Query(() => String)
+  async userString () {
+    return 'Teste'
+  }
+  
+  @Mutation(() => User)
+  async registerUser(
+    @Arg('email') email: string,
+    @Arg('password') password: string,
+    @Arg('name') name: string,
+  ): Promise<User> {
 
-    @Query(() => String!)
-    async getUser() {
-        return 'Usuario Joaquim'
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (existingUser) {
+        throw new Error('User with this email already exists');
     }
 
-    @Mutation(()=> UserModel)
-    async createUser(@Arg('data')data: CreateUserInput) {
-        const user = {
-            name: data.name,
-            password: data.password
-        }
-        return user
-    }
+    const user = new User({
+      email,
+      password: await bcrypt.hash(password, 10),
+      name,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    await user.save();
 
+    return user;
+  }
 }
