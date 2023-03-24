@@ -1,5 +1,9 @@
-import { Column, Model, Table, Unique } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, Unique } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { GenreTvShow } from '../enum/genre-tv-show.enum';
+import { PlataformToWatch } from '../enum/plataform-to-watch.enum';
+
+
 
 @Table
 @ObjectType()
@@ -27,6 +31,18 @@ export class TvShow extends Model{
   @Field()
   @Column
   numberOfSeasons: string;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(GenreTvShow)),
+    defaultValue: GenreTvShow.OTHER,
+  })
+  genre: GenreTvShow
+
+  @Column({
+    type: DataType.ENUM(...Object.values(PlataformToWatch)),
+    defaultValue: PlataformToWatch.OTHER,
+  })
+  plataformToWatch: PlataformToWatch
 
   @Field()
   @Column
