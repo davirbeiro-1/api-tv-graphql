@@ -1,4 +1,5 @@
 import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
+import { CreateEpisodeInput } from '../dto/input/create-episode.input';
 import { Episode } from '../dto/model/episode.model';
 
 @Resolver()
@@ -10,21 +11,11 @@ export class EpisodeResolver {
 
     @Mutation(() => Episode)
     async createEpisode(
-        @Arg('name') name: string,
-        @Arg('isReleased') isReleased: boolean,
-        @Arg('releaseDate') releaseDate: string,
-        @Arg('duration') duration: string,
-        @Arg('tvShowId') tvShowId: number,
-        @Arg('description') description: string,
+        @Arg('episodeInput') episodeInput: CreateEpisodeInput
     ): Promise<Episode> {
 
         const episode = new Episode({
-            name,          
-            isReleased,
-            releaseDate,          
-            duration,
-            description,
-            tvShowId,
+            ...episodeInput,
             createdAt: new Date(),
             updatedAt: new Date()
         });
