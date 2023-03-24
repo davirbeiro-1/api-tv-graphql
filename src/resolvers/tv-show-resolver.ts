@@ -3,9 +3,10 @@ import { TvShow } from '../dto/model/tv-show-model';
 
 @Resolver()
 export class TvShowResolver {
-    @Query(() => String)
-    async tvShow() {
-        return 'Teste'
+    @Query(() => [TvShow])
+    async getTvShows(): Promise<TvShow[]> {
+        const tvShows = await TvShow.findAll()
+        return tvShows
     }
 
     @Mutation(() => TvShow)
