@@ -9,11 +9,18 @@ export class TvShowResolver {
         return tvShows
     }
 
+    @Query(() => [TvShow])
+    async getTvByGenre(@Arg("genre") genre: string): Promise<TvShow[]> {
+        const tvShows = await TvShow.findAll({where: {genre}})
+        return tvShows
+    }
+
     @Mutation(() => TvShow)
     async createTvShow(
         @Arg('name') name: string,
         @Arg('startsAt') startsAt: string,
         @Arg('endsAt') endsAt: string,
+        @Arg('genre') genre: string,
         @Arg('numberOfEpisodes') numberOfEpisodes: string,
         @Arg('numberOfSeasons') numberOfSeasons: string,
         @Arg('description') description: string,
@@ -27,6 +34,7 @@ export class TvShowResolver {
             numberOfEpisodes,
             numberOfSeasons,
             description,
+            genre,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
