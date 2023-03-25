@@ -58,8 +58,8 @@ const getActorsByTvShowIdQuery = `query Query($tvShowId: Float!) {
     getActorsByTvShowId(tvShowId: $tvShowId)
 }
 `
-describe.only('Get', () => {
-    it.only("Get tv shows which an actor appears", async () => {
+describe('Get', () => {
+    it("Get tv shows which an actor appears", async () => {
         const actor = {
             age: faker.date.birthdate().toString(),
             name: faker.name.firstName()
