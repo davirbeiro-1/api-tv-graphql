@@ -1,15 +1,24 @@
-import { Table, Column, Model, ForeignKey } from 'sequelize-typescript';
-import { Actor } from './actor.model';
+import { Model, Table, Column, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { ObjectType, Field, ID } from 'type-graphql';
 import { TvShow } from './tv-show.model';
+import { Actor } from './actor.model';
 
 @Table
+@ObjectType()
 export class TvShowActor extends Model {
-
-  @ForeignKey(() => TvShow)
+  @Field(() => ID)
   @Column
-  tvShowId: number;
-
   @ForeignKey(() => Actor)
+  actorId!: number;
+
+  @Field(() => ID)
   @Column
-  actorId: number;
+  @ForeignKey(() => TvShow)
+  tvShowId!: number;
+
+  @BelongsTo(() => Actor)
+  actor!: Actor;
+
+  @BelongsTo(() => TvShow)
+  tvShow!: TvShow;
 }
