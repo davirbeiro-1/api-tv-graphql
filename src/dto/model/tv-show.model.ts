@@ -4,11 +4,12 @@ import { GenreTvShow } from '../enum/genre-tv-show.enum';
 import { PlataformToWatch } from '../enum/plataform-to-watch.enum';
 import { Actor } from './actor.model';
 import { Episode } from './episode.model';
-// import { TvShowActor } from './tv-show-actor.model';
+import { TvShowActor } from './tv-show-actor.model';
 
 @Table
 @ObjectType()
 export class TvShow extends Model{
+
   @Field(() => ID)
   @Column({ primaryKey: true, autoIncrement: true })
   id: number;
@@ -52,8 +53,8 @@ export class TvShow extends Model{
   @HasMany(() => Episode)
   episodes: Episode[];
 
-  // @BelongsToMany(() => Actor, () => TvShowActor)
-  // actors: Actor[];
+  @BelongsToMany(() => Actor, () => TvShowActor)
+  actors: Actor[];
 
   @Field(() => Date)
   @Column({ field: 'created_at' })
