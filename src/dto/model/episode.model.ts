@@ -36,8 +36,6 @@ export class Episode extends Model{
   @Column
   description: string;
 
-
-  
   @Field(() => Date)
   @Column({ field: 'created_at' })
   createdAt: Date;
