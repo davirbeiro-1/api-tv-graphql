@@ -1,7 +1,5 @@
 import { Arg, Mutation, Resolver, Query } from 'type-graphql';
 import { Actor } from '../dto/model/actor.model';
-import { TvShowActor } from '../dto/model/tv-show-actor.model';
-import { TvShow } from '../dto/model/tv-show.model';
 
 @Resolver()
 export class ActorResolver {
