@@ -1,4 +1,5 @@
 import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
+import { TvShowActor } from '../dto/model/tv-show-actor.model';
 import { TvShow } from '../dto/model/tv-show.model';
 
 @Resolver()
@@ -9,9 +10,22 @@ export class TvShowResolver {
         return tvShows
     }
 
+    @Query(() => [String])
+    async getActorsByTvShowId(
+        @Arg('tvShowId') tvShowId: number,
+    ) {
+        const tvShow = await TvShow.findByPk(tvShowId);
+        if (!tvShow) {
+          throw new Error(`Actor with id ${tvShow} not found`);
+        }
+        
+        const actors = await tvShow.$get('actors');
+        return actors.map(actors => actors.name);
+    }
+
     @Query(() => [TvShow])
     async getTvByGenre(@Arg("genre") genre: string): Promise<TvShow[]> {
-        const tvShows = await TvShow.findAll({where: {genre}})
+        const tvShows = await TvShow.findAll({ where: { genre } })
         return tvShows
     }
 
@@ -24,8 +38,7 @@ export class TvShowResolver {
         @Arg('numberOfEpisodes') numberOfEpisodes: string,
         @Arg('numberOfSeasons') numberOfSeasons: string,
         @Arg('description') description: string,
-    ): Promise<TvShow> {
-
+        @Arg('actorsIds', () => [String]) actorsIds: string[]): Promise<TvShow> {
 
         const tvShow = new TvShow({
             name,
@@ -39,6 +52,12 @@ export class TvShowResolver {
             updatedAt: new Date(),
         });
         await tvShow.save();
+
+        // validate this
+        for (const actorId of actorsIds) {
+            await TvShowActor.create({ tvShowId: tvShow.id, actorId });
+        }
+
 
         return tvShow;
     }
