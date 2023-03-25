@@ -10,22 +10,16 @@ import { User } from './dto/model/user-model'
 import { TvShowResolver } from './resolvers/tv-show-resolver';
 import { EpisodeResolver } from './resolvers/episode-resolver';
 import { ActorResolver } from './resolvers/actor-resolver';
+import { createSchema } from './utils/createSchema';
 
 
 const app = express();
 
 async function main() {
   await sequelize.authenticate();
-  console.log('Connection has been established successfully.');
-
-  // create tables if not exists
   await sequelize.sync();
 
-  const schema = await buildSchema({
-    resolvers: [UserResolver,AuthResolver, TvShowResolver, EpisodeResolver, ActorResolver],
-    // globalMiddlewares: [addAuthMiddleware],
-    
-  });
+  const schema = await createSchema()
 
   const server = new ApolloServer({
     schema,
