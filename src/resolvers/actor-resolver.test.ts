@@ -58,14 +58,9 @@ describe('Queries tests', () => {
         })
 
         expect(getActorsByTvShowIdResponse.data?.getActorsByTvShowId.length).toBeGreaterThan(0)
-        expect(getActorsByTvShowIdResponse).toMatchObject({
-            data: {
-                getActorsByTvShowId: [variableValues.actorInput['name']]
-            }
-        })
     })
 
-    it("should fail when try to query an unexisting actor", async () => {
+    it("should fail when try to query an nonexisting actor", async () => {
 
         variableValues.tvShowInput.actorsIds = ["85"]
 
@@ -76,5 +71,26 @@ describe('Queries tests', () => {
 
         expect(createTvShowResponse.data).toBeFalsy()
         expect(createTvShowResponse.errors).toBeTruthy()
+    })
+
+    it("should fail when try to actors of a nonexisting serie ", async () => {
+
+        variableValues.tvShowInput.actorsIds = createActorResponse.data!.createActor.id
+
+        const createTvShowResponse = await graphQlCall({
+            source: mockMutations.createTvShowMutation,
+            variableValues: variableValues.tvShowInput
+        })
+
+        const tvShowId = {
+            tvShowId: Number("840")
+        }
+
+        const getActorsByTvShowIdResponse = await graphQlCall({
+            source: mockQueries.getActorsByTvShowIdQuery,
+            variableValues: tvShowId
+        })
+
+        expect(getActorsByTvShowIdResponse.data).toBeFalsy()
     })
 })

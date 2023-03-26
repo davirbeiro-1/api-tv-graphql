@@ -6,6 +6,7 @@ import { mockMutations } from "../test-utils/mockMutations";
 import { variableValues } from "../test-utils/mockVariableValues";
 import { TvShow } from "../dto/model/tv-show.model";
 import { User } from "../dto/model/user-model";
+import { ErrorMessage } from "../utils/error-message";
 
 let conn: Sequelize
 let registerUserResponse: any
@@ -45,6 +46,18 @@ describe('Mutations', () => {
         })
     })
 
+    it("should fail when try to insert an existing user", async () => {
+
+        const sameRegisterUserResponse = await graphQlCall({
+            source: mockMutations.registerUserMutation,
+            variableValues: variableValues.userInput
+        })
+
+        expect(sameRegisterUserResponse.data).toBeFalsy()
+        sameRegisterUserResponse.errors?.forEach(error => 
+            expect(error.message).toMatch(ErrorMessage.USER_ALREADY_EXISTS))
+    })
+
     it('should create a favorite TV show from a user with success', async () => {
         const userTvShowInput = {
             userId: '1',
@@ -71,6 +84,22 @@ describe('Mutations', () => {
         })
         
         expect(removeFavoriteShowMutationResponse.data?.removeFavorite).toBe(true)
+    });
+
+    it(`should fail when try to remove an nonexistent user's tv show`, async () => {
+        const userTvShowInput = {
+            userId: '1',
+            tvShowId: '809'
+        }
+
+        const removeFavoriteShowMutationResponse = await graphQlCall({
+            source: mockMutations.removeFavoriteShow,
+            variableValues: userTvShowInput
+        })
+        
+        expect(removeFavoriteShowMutationResponse.data).toBeFalsy()
+        removeFavoriteShowMutationResponse.errors?.forEach(error => 
+            expect(error.message).toMatch(ErrorMessage.FAVORITE_USER_SHOW_DOESNT_EXIST))
     });
 
 })

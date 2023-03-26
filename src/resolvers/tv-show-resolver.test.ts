@@ -61,10 +61,10 @@ describe('Queries', () => {
         expect(getTvShowByGenreResponse.data?.getTvByGenre.length).toBeGreaterThan(0)
     })
 
-    it("should fail when try to get tv show passing an unexisting order param", async () => {
+    it("should fail when try to get tv show passing an nonexisting order param", async () => {
         const genre = {
             genre: 'action',
-            orderBy: ["unexisting_order_param"]
+            orderBy: ["nonexisting_param"]
         }
 
         const getTvShowByGenreResponse = await graphQlCall({
@@ -90,6 +90,19 @@ describe('Queries', () => {
             source: mockQueries.getTvShowsByActorId,
             variableValues: actorId
         })
+        
         expect(getTvShowsByActorIdResponse.data?.getTvShowsByActorId.length).toBeGreaterThan(0)
+    })
+
+    it("should fail when try to all get actors by a nonexisting tv show id", async () => {
+        const actorId = {
+            actorId: Number("452")
+        }
+
+        const getTvShowsByActorIdResponse = await graphQlCall({
+            source: mockQueries.getTvShowsByActorId,
+            variableValues: actorId
+        })
+        expect(getTvShowsByActorIdResponse.data).toBeFalsy()
     })
 })
