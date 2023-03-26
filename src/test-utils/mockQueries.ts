@@ -10,12 +10,14 @@ const getTvByGenreQuery = `query GetTvShows($orderBy: [String!]!, $genre: String
 }
 `
 const getActorsByTvShowIdQuery = `query Query($tvShowId: Float!) {
-    getActorsByTvShowId(tvShowId: $tvShowId)
+    getActorsByTvShowId(tvShowId: $tvShowId){
+      name
+    }
 }
 `
 const getTvShowsByActorId = `
 query Query($actorId: Float!) {
-    getTvShowsByActorId(actorId: $actorId)
+    getTvShowsByActorId(actorId: $actorId){name}
 }`
 
 export const mockQueries = {
