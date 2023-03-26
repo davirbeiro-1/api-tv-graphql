@@ -1,46 +1,81 @@
 import Sequelize from "sequelize/types/sequelize";
 import { graphQlCall } from "../test-utils/graphQlCall";
 import { testConnect } from "../test-utils/testConn";
-import { faker } from '@faker-js/faker';
-import { insertActor } from "../test-utils/insertActorHelper";
+import { UserTvShow } from "../dto/model/user-tv-show.model";
+import { mockMutations } from "../test-utils/mockMutations";
+import { variableValues } from "../test-utils/mockVariableValues";
+import { TvShow } from "../dto/model/tv-show.model";
+import { User } from "../dto/model/user-model";
 
 let conn: Sequelize
+let registerUserResponse: any
+let createTvShowMutationResponse: any
+
 beforeAll(async () => {
     conn = await testConnect()
+
+    if (!registerUserResponse) {
+        registerUserResponse = await graphQlCall({
+            source: mockMutations.registerUserMutation,
+            variableValues: variableValues.userInput
+        })
+    }
+
+    if (!createTvShowMutationResponse) {
+        createTvShowMutationResponse = await graphQlCall({
+            source: mockMutations.createTvShowMutation,
+            variableValues: variableValues.tvShowInput
+        })
+    }
 })
 
 afterAll(async () => {
     await conn.close()
 })
 
-const userMutation = `
-mutation RegisterUser($name: String!, $password: String!, $email: String!) {
-    registerUser(name: $name, password: $password, email: $email) {
-      name,
-      email  
-    }
-  }
-`
-
-describe('Register', () => {
-    it("register user", async () => {
-        const user = {
-            name: faker.name.firstName(),
-            password: faker.internet.password(),
-            email: faker.internet.email()
-        }
-        const response = await graphQlCall({
-            source: userMutation,
-            variableValues: user
-        })
-
-        expect(response).toMatchObject({
+describe('Mutations', () => {
+    it("should register an user with success", async () => {
+        expect(registerUserResponse).toMatchObject({
             data: {
                 registerUser: {
-                    name: user.name,
-                    email: user.email
+                    name: variableValues.userInput.name,
+                    email: variableValues.userInput.email
                 }
             }
         })
     })
+
+    it('should create a favorite TV show from a user with success', async () => {
+        const userTvShowInput = {
+            userId: '1',
+            tvShowId: '1'
+        }
+
+        const createFavoriteMutationResponse = await graphQlCall({
+            source: mockMutations.createFavoriteShow,
+            variableValues: userTvShowInput
+        })
+        const tvShowResponse = await TvShow.findOne({ where: { id: createFavoriteMutationResponse.data?.addFavorite.tvShowId } });
+        expect(tvShowResponse?.name).toMatch(variableValues.tvShowInput.name)
+    });
+
+    it('should remove a favorite TV show from a user with success', async () => {
+        const userTvShowInput = {
+            userId: '1',
+            tvShowId: '1'
+        }
+
+        const removeFavoriteShowMutationResponse = await graphQlCall({
+            source: mockMutations.removeFavoriteShow,
+            variableValues: userTvShowInput
+        })
+        
+        expect(removeFavoriteShowMutationResponse.data?.removeFavorite).toBe(true)
+    });
+
 })
+
+
+
+
+
