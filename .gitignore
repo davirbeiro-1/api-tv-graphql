@@ -13,3 +13,4 @@ package-lock.json
 schema.gql
 .env
 coverage/
+codegen.yml
