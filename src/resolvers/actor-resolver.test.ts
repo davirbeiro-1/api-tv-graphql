@@ -4,6 +4,7 @@ import { testConnect } from "../test-utils/testConn";
 import { mockMutations } from "../test-utils/mockMutations";
 import { mockQueries } from "../test-utils/mockQueries";
 import { variableValues } from "../test-utils/mockVariableValues";
+import { ErrorMessage } from "../utils/error-message";
 
 let createActorResponse: any
 let conn: Sequelize
@@ -62,5 +63,18 @@ describe('Queries tests', () => {
                 getActorsByTvShowId: [variableValues.actorInput['name']]
             }
         })
+    })
+
+    it("should fail when try to query an unexisting actor", async () => {
+
+        variableValues.tvShowInput.actorsIds = ["85"]
+
+        const createTvShowResponse = await graphQlCall({
+            source: mockMutations.createTvShowMutation,
+            variableValues: variableValues.tvShowInput
+        })
+
+        expect(createTvShowResponse.data).toBeFalsy()
+        expect(createTvShowResponse.errors).toBeTruthy()
     })
 })
