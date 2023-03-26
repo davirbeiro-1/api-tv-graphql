@@ -5,6 +5,7 @@ import { insertActor } from "../test-utils/insertActorHelper";
 import { mockMutations } from "../test-utils/mockMutations";
 import { mockQueries } from "../test-utils/mockQueries";
 import { variableValues } from "../test-utils/mockVariableValues";
+import { ErrorMessage } from "../utils/error-message";
 
 let conn: Sequelize
 let createTvShowResponse: any
@@ -48,7 +49,8 @@ describe('Queries', () => {
 
     it("should return all actions tv shows with success", async () => {
         const genre = {
-            genre: 'action'
+            genre: 'action',
+            orderBy: ["description"]
         }
 
         const getTvShowByGenreResponse = await graphQlCall({
@@ -58,6 +60,26 @@ describe('Queries', () => {
 
         expect(getTvShowByGenreResponse.data?.getTvByGenre.length).toBeGreaterThan(0)
     })
+
+    it("should fail when try to get tv show passing an unexisting order param", async () => {
+        const genre = {
+            genre: 'action',
+            orderBy: ["unexisting_order_param"]
+        }
+
+        const getTvShowByGenreResponse = await graphQlCall({
+            source: mockQueries.getTvByGenreQuery,
+            variableValues: genre
+
+        })
+
+        expect(getTvShowByGenreResponse.data).toBeFalsy()
+        getTvShowByGenreResponse.errors?.forEach((error) => {
+            expect(error.message).toMatch(ErrorMessage.WRONG_ORDER_BY_PARAMS)
+        })
+    })
+
+    
 
     it("should return all get actors by tv show id", async () => {
         const actorId = {
