@@ -1,7 +1,7 @@
-import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
+import { Arg, Mutation, Resolver, Query } from 'type-graphql';
 import { TvShowActor } from '../dto/model/tv-show-actor.model';
 import { TvShow } from '../dto/model/tv-show.model';
-
+import { ErrorMessage } from '../utils/error-message';
 @Resolver()
 export class TvShowResolver {
     @Query(() => [TvShow])
@@ -16,17 +16,26 @@ export class TvShowResolver {
     ) {
         const tvShow = await TvShow.findByPk(tvShowId);
         if (!tvShow) {
-          throw new Error(`Actor with id ${tvShow} not found`);
+            throw new Error(`Actor with id ${tvShow} not found`);
         }
-        
+
         const actors = await tvShow.$get('actors');
         return actors.map(actors => actors.name);
     }
 
     @Query(() => [TvShow])
-    async getTvByGenre(@Arg("genre") genre: string): Promise<TvShow[]> {
-        const tvShows = await TvShow.findAll({ where: { genre } })
-        return tvShows
+    async getTvByGenre(@Arg("genre") genre: string,
+        @Arg("orderBy", () => [String]) orderBy: [string])
+        : Promise<TvShow[]> {
+        const attributes = Object.keys(TvShow.getAttributes())
+
+        const isIncluded = orderBy.every((value) =>  attributes.includes(value));
+
+        if(!isIncluded) {
+            throw new Error(ErrorMessage.WRONG_ORDER_BY_PARAMS);
+        }
+
+        return await TvShow.findAll({ where: { genre }, order: orderBy })
     }
 
     @Mutation(() => TvShow)
