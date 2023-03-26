@@ -1,5 +1,6 @@
 import { Arg, Mutation, Resolver, Query } from 'type-graphql';
 import { Actor } from '../dto/model/actor.model';
+import { ErrorMessage } from '../utils/error-message';
 
 @Resolver()
 export class ActorResolver {
@@ -8,8 +9,9 @@ export class ActorResolver {
         @Arg('actorId') actorId: number,
     ) {
         const actor = await Actor.findByPk(actorId);
+
         if (!actor) {
-          throw new Error(`Actor with id ${actorId} not found`);
+          throw new Error(ErrorMessage.ACTOR_NOT_FOUND);
         }
         
         const tvShows = await actor.$get('tvShows');
