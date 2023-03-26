@@ -1,21 +1,23 @@
 import { Arg, Mutation, Resolver, Query } from 'type-graphql';
 import { Actor } from '../dto/model/actor.model';
+import { TvShow } from '../dto/model/tv-show.model';
 import { ErrorMessage } from '../utils/error-message';
 
 @Resolver()
 export class ActorResolver {
-    @Query(() => [String])
-    async getTvShowsByActorId(
-        @Arg('actorId') actorId: number,
-    ) {
-        const actor = await Actor.findByPk(actorId);
-
-        if (!actor) {
-          throw new Error(ErrorMessage.ACTOR_NOT_FOUND);
-        }
+   
+    @Query(() => [Actor])
+    async getActorsByTvShowId(
+        @Arg('tvShowId') tvShowId: number,
+        ) {
+        const tvShow = await TvShow.findByPk(tvShowId);
         
-        const tvShows = await actor.$get('tvShows');
-        return tvShows.map(tvShow => tvShow.name);
+        if (!tvShow) {
+            throw new Error(ErrorMessage.TVSHOW_NOT_FOUND);
+        }
+
+        const actors = await tvShow.$get('actors');
+        return actors.map(actors => actors);
     }
 
     @Mutation(() => Actor)
@@ -30,6 +32,7 @@ export class ActorResolver {
             createdAt: new Date(),
             updatedAt: new Date()
         });
+
         await actor.save();
 
         return actor;

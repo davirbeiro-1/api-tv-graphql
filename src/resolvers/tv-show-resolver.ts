@@ -1,4 +1,5 @@
 import { Arg, Mutation, Resolver, Query } from 'type-graphql';
+import { Actor } from '../dto/model/actor.model';
 import { TvShowActor } from '../dto/model/tv-show-actor.model';
 import { TvShow } from '../dto/model/tv-show.model';
 import { ErrorMessage } from '../utils/error-message';
@@ -6,21 +7,21 @@ import { ErrorMessage } from '../utils/error-message';
 export class TvShowResolver {
     @Query(() => [TvShow])
     async getTvShows(): Promise<TvShow[]> {
-        const tvShows = await TvShow.findAll()
-        return tvShows
+        return await TvShow.findAll()
     }
 
-    @Query(() => [String])
-    async getActorsByTvShowId(
-        @Arg('tvShowId') tvShowId: number,
+    @Query(() => [TvShow])
+    async getTvShowsByActorId(
+        @Arg('actorId') actorId: number,
     ) {
-        const tvShow = await TvShow.findByPk(tvShowId);
-        if (!tvShow) {
-            throw new Error(`Actor with id ${tvShow} not found`);
-        }
+        const actor = await Actor.findByPk(actorId);
 
-        const actors = await tvShow.$get('actors');
-        return actors.map(actors => actors.name);
+        if (!actor) {
+          throw new Error(ErrorMessage.ACTOR_NOT_FOUND);
+        }
+        
+        const tvShows = await actor.$get('tvShows');
+        return tvShows.map(tvShow => tvShow);
     }
 
     @Query(() => [TvShow])
@@ -60,13 +61,13 @@ export class TvShowResolver {
             createdAt: new Date(),
             updatedAt: new Date(),
         });
+
         await tvShow.save();
 
         // validate this
         for (const actorId of actorsIds) {
             await TvShowActor.create({ tvShowId: tvShow.id, actorId });
         }
-
 
         return tvShow;
     }
