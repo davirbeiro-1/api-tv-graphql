@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
+import { Arg, Mutation, Resolver, Query } from 'type-graphql';
 import { User } from '../dto/model/user-model';
 import { UserTvShow } from '../dto/model/user-tv-show.model';
 
