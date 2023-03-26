@@ -1,15 +1,7 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
-import { buildSchema } from 'type-graphql';
-import { AuthResolver } from './resolvers/auth-resolver';
-import { addAuthMiddleware } from './middleware/auth';
-import { UserResolver } from './resolvers/user-resolver';
 import { sequelize } from '../database';
-import { User } from './dto/model/user-model'
-import { TvShowResolver } from './resolvers/tv-show-resolver';
-import { EpisodeResolver } from './resolvers/episode-resolver';
-import { ActorResolver } from './resolvers/actor-resolver';
 import { createSchema } from './utils/createSchema';
 
 
