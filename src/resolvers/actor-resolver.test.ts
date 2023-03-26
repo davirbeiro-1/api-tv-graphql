@@ -1,107 +1,65 @@
 import Sequelize from "sequelize/types/sequelize";
 import { graphQlCall } from "../test-utils/graphQlCall";
 import { testConnect } from "../test-utils/testConn";
-import { faker } from '@faker-js/faker';
+import { mockMutations } from "../test-utils/mockMutations";
+import { mockQueries } from "../test-utils/mockQueries";
+import { variableValues } from "../test-utils/mockVariableValues";
 
+let createActorResponse: any
 let conn: Sequelize
+
 beforeAll(async () => {
     conn = await testConnect()
+    if(!createActorResponse){
+        createActorResponse = await graphQlCall({
+            source: mockMutations.createActor,
+            variableValues: variableValues.actorInput
+    
+        })
+    }
+
 })
 
 afterAll(async () => {
     await conn.close()
 })
 
-const actorMutation = `
-mutation Mutation($age: String!, $name: String!) {
-    createActor(age: $age, name: $name) {
-      name
-      age
-      id
-    }
-  }
-`
-
-const tvShowMutation = `
-mutation CreateTvShow($actorsIds: [String!]!, $description: String!, $numberOfSeasons: String!, $numberOfEpisodes: String!, $genre: String!, $endsAt: String!, $startsAt: String!, $name: String!) {
-    createTvShow(actorsIds: $actorsIds, description: $description, numberOfSeasons: $numberOfSeasons, numberOfEpisodes: $numberOfEpisodes, genre: $genre, endsAt: $endsAt, startsAt: $startsAt, name: $name) {
-      name
-      description
-      id
-    }
-  }
-`
-
-describe('Create', () => {
-    it("create actor", async () => {
-        const actor = {
-            age: faker.date.birthdate().toString(),
-            name: faker.name.firstName()
-        }
-        const reponse = await graphQlCall({
-            source: actorMutation,
-            variableValues: actor
-
-        })
-        expect(reponse).toMatchObject({
+describe('Mutation tests', () => {
+    it("should be create actor with success", async () => {
+        expect(createActorResponse).toMatchObject({
             data: {
                 createActor: {
-                    age: actor.age,
-                    name: actor.name
+                    age: variableValues.actorInput.age,
+                    name: variableValues.actorInput.name
                 }
             }
         })
     })
 })
 
-const getActorsByTvShowIdQuery = `query Query($tvShowId: Float!) {
-    getActorsByTvShowId(tvShowId: $tvShowId)
-}
-`
-describe('Get', () => {
-    it("Get tv shows which an actor appears", async () => {
-        const actor = {
-            age: faker.date.birthdate().toString(),
-            name: faker.name.firstName()
-        }
-        const reponse = await graphQlCall({
-            source: actorMutation,
-            variableValues: actor
+describe('Queries tests', () => {
+    it("should get tv shows which an actor appears", async () => {
 
+        variableValues.tvShowInput.actorsIds = createActorResponse.data!.createActor.id
+
+        const createTvShowResponse = await graphQlCall({
+            source: mockMutations.createTvShowMutation,
+            variableValues: variableValues.tvShowInput
         })
-    
-        const tvShow = {
-            actorsIds: [
-                reponse.data!.createActor.id
-            ],
-            description: faker.datatype.string(6),
-            numberOfSeasons: faker.datatype.float().toString(),
-            numberOfEpisodes: faker.datatype.float().toString(),
-            genre: "action",
-            endsAt: faker.date.recent().toString(),
-            startsAt: faker.date.recent().toString(),
-            name: faker.name.firstName()
+
+        const tvShowId = {
+            tvShowId: Number(createTvShowResponse.data!.createTvShow.id)
         }
 
-        const reponse2 = await graphQlCall({
-            source: tvShowMutation,
-            variableValues: tvShow
+        const getActorsByTvShowIdResponse = await graphQlCall({
+            source: mockQueries.getActorsByTvShowIdQuery,
+            variableValues: tvShowId
         })
 
-        const opa ={
-            tvShowId: Number(reponse2.data!.createTvShow.id)
-          }
-         
-
-        const reponse3 = await graphQlCall({
-            source: getActorsByTvShowIdQuery,
-            variableValues: opa
-        })
-
-        expect(reponse3.data?.getActorsByTvShowId.length).toBeGreaterThan(0)
-        expect(reponse3).toMatchObject({
+        expect(getActorsByTvShowIdResponse.data?.getActorsByTvShowId.length).toBeGreaterThan(0)
+        expect(getActorsByTvShowIdResponse).toMatchObject({
             data: {
-                getActorsByTvShowId: [actor['name']]
+                getActorsByTvShowId: [variableValues.actorInput['name']]
             }
         })
     })
