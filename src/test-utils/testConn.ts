@@ -1,17 +1,12 @@
 import { Sequelize } from "sequelize-typescript";
-import { Actor } from "../dto/model/actor.model";
-import { Episode } from "../dto/model/episode.model";
-import { TvShowActor } from "../dto/model/tv-show-actor.model";
-import { TvShow } from "../dto/model/tv-show.model";
-import { User } from "../dto/model/user-model";
-
+import { models } from "../utils/models";
 export async function testConnect() {
     const testConnection = new Sequelize({
         dialect: 'sqlite',
         storage: ':memory:',
         logging: false
     });
-    testConnection.addModels([User, TvShow, Episode, Actor, TvShowActor])
+    testConnection.addModels(models)
     await testConnection.sync()
     return testConnection
 }
