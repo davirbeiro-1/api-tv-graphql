@@ -1,5 +1,7 @@
-import { Column, Model, Table, Unique } from 'sequelize-typescript';
+import { BelongsToMany, Column, Model, Table, Unique } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
+import { TvShow } from './tv-show.model';
+import { UserTvShow } from './user-tv-show.model';
 
 @Table
 @ObjectType()
@@ -20,6 +22,9 @@ export class User extends Model{
   @Field()
   @Column
   name: string;
+
+  @BelongsToMany(() => TvShow, () => UserTvShow)
+  tvShows: TvShow[];
 
   @Field(() => Date)
   @Column({ field: 'created_at' })

@@ -5,6 +5,8 @@ import { PlataformToWatch } from '../enum/plataform-to-watch.enum';
 import { Actor } from './actor.model';
 import { Episode } from './episode.model';
 import { TvShowActor } from './tv-show-actor.model';
+import { User } from './user-model';
+import { UserTvShow } from './user-tv-show.model';
 
 @Table
 @ObjectType()
@@ -55,6 +57,9 @@ export class TvShow extends Model{
 
   @BelongsToMany(() => Actor, () => TvShowActor)
   actors: Actor[];
+  
+  @BelongsToMany(() => User, () => UserTvShow)
+  users: User[];
 
   @Field(() => Date)
   @Column({ field: 'created_at' })
