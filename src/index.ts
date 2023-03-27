@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
-import { sequelize } from '../database';
+import { sequelize } from './database';
 import { createSchema } from './utils/createSchema';
+import { fetchTvShowsJob } from './jobs/fetch-tv-show.job';
 
 
 const app = express();
@@ -25,6 +26,8 @@ async function main() {
   app.listen({ port: 4000 }, () => {
     console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
   });
+
+  fetchTvShowsJob
 }
 
 main();

@@ -1,13 +1,7 @@
-import { Arg, Mutation, Resolver, Query, Ctx } from 'type-graphql';
-import { CreateEpisodeInput } from '../dto/input/create-episode.input';
+import { Arg, Mutation, Resolver, Query} from 'type-graphql';
 import { Episode } from '../dto/model/episode.model';
-
 @Resolver()
 export class EpisodeResolver {
-    @Query(() => String)
-    async episode() {
-        return 'Teste'
-    }
 
     @Mutation(() => Episode)
     async createEpisode(

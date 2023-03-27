@@ -16,8 +16,7 @@ export class ActorResolver {
             throw new Error(ErrorMessage.TVSHOW_NOT_FOUND);
         }
 
-        const actors = await tvShow.$get('actors');
-        return actors.map(actors => actors);
+        return  await tvShow.$get('actors');
     }
 
     @Mutation(() => Actor)

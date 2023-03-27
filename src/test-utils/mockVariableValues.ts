@@ -10,7 +10,8 @@ const tvShowInput = {
     genre: "action",
     endsAt: faker.date.recent().toString(),
     startsAt: faker.date.recent().toString(),
-    name: faker.name.firstName()
+    name: faker.name.firstName(),
+    plataformToWatch: "netflix"
 }
 
 const actorInput = {

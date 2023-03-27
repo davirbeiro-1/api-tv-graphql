@@ -1,7 +1,5 @@
-import { BelongsToMany, Column, DataType, HasMany, Model, Table, Unique } from 'sequelize-typescript';
+import { BelongsToMany, Column, HasMany, Model, Table, Unique } from 'sequelize-typescript';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { GenreTvShow } from '../enum/genre-tv-show.enum';
-import { PlataformToWatch } from '../enum/plataform-to-watch.enum';
 import { Actor } from './actor.model';
 import { Episode } from './episode.model';
 import { TvShowActor } from './tv-show-actor.model';
@@ -36,17 +34,13 @@ export class TvShow extends Model{
   @Column
   numberOfSeasons: string;
 
-  @Column({
-    type: DataType.ENUM(...Object.values(GenreTvShow)),
-    defaultValue: GenreTvShow.OTHER,
-  })
-  genre: GenreTvShow
+  @Field()
+  @Column
+  genre: String
 
-  @Column({
-    type: DataType.ENUM(...Object.values(PlataformToWatch)),
-    defaultValue: PlataformToWatch.OTHER,
-  })
-  plataformToWatch: PlataformToWatch
+  @Field()
+  @Column
+  plataformToWatch: String
 
   @Field()
   @Column

@@ -6,8 +6,18 @@ import { ErrorMessage } from '../utils/error-message';
 @Resolver()
 export class TvShowResolver {
     @Query(() => [TvShow])
-    async getTvShows(): Promise<TvShow[]> {
-        return await TvShow.findAll()
+    async getTvShows(
+        @Arg("limit", { nullable: true }) limit?: number,
+        @Arg("offset", { nullable: true }) offset?: number
+    ): Promise<TvShow[]> {
+        return await TvShow.findAll({limit, offset});
+    }
+
+    @Query(() => TvShow)
+    async getTvShowByName(
+        @Arg("name") name?: string,
+    ): Promise<TvShow | null> {
+      return await TvShow.findOne({ where: {name} });
     }
 
     @Query(() => [TvShow])
@@ -20,13 +30,14 @@ export class TvShowResolver {
           throw new Error(ErrorMessage.ACTOR_NOT_FOUND);
         }
         
-        const tvShows = await actor.$get('tvShows');
-        return tvShows.map(tvShow => tvShow);
+       return  await actor.$get('tvShows');
     }
 
     @Query(() => [TvShow])
     async getTvByGenre(@Arg("genre") genre: string,
-        @Arg("orderBy", () => [String]) orderBy: [string])
+        @Arg("orderBy", () => [String]) orderBy: [string],
+        @Arg("limit", { nullable: true }) limit?: number,
+        @Arg("offset", { nullable: true }) offset?: number)
         : Promise<TvShow[]> {
         const attributes = Object.keys(TvShow.getAttributes())
 
@@ -36,7 +47,7 @@ export class TvShowResolver {
             throw new Error(ErrorMessage.WRONG_ORDER_BY_PARAMS);
         }
 
-        return await TvShow.findAll({ where: { genre }, order: orderBy })
+        return await TvShow.findAll({ where: { genre }, order: orderBy, limit, offset })
     }
 
     @Mutation(() => TvShow)
@@ -49,7 +60,7 @@ export class TvShowResolver {
         @Arg('numberOfSeasons') numberOfSeasons: string,
         @Arg('description') description: string,
         @Arg('actorsIds', () => [String]) actorsIds: string[]): Promise<TvShow> {
-
+        
         const tvShow = new TvShow({
             name,
             startsAt,
@@ -64,7 +75,6 @@ export class TvShowResolver {
 
         await tvShow.save();
 
-        // validate this
         for (const actorId of actorsIds) {
             await TvShowActor.create({ tvShowId: tvShow.id, actorId });
         }

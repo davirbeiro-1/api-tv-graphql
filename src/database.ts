@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize-typescript';
-import { models } from './src/utils/models';
+import { models } from './utils/models';
 
 export const sequelize = new Sequelize({
   database: 'tekever',

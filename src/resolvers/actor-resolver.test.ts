@@ -57,6 +57,7 @@ describe('Queries tests', () => {
             variableValues: tvShowId
         })
 
+        console.log(getActorsByTvShowIdResponse)
         expect(getActorsByTvShowIdResponse.data?.getActorsByTvShowId.length).toBeGreaterThan(0)
     })
 

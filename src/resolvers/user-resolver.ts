@@ -35,13 +35,9 @@ export class UserResolver {
   async addFavorite(
     @Arg('userId') userId: string,
     @Arg('tvShowId') tvShowId: string) : Promise<UserTvShow> {
-
-    const userTvShow = new UserTvShow();
-    userTvShow.userId = userId;
-    userTvShow.tvShowId = tvShowId;
-
-    const createdUserTvShow = await userTvShow.save();
-    return createdUserTvShow
+    const userTvShow = new UserTvShow({ userId, tvShowId });
+    await userTvShow.save();
+    return userTvShow
   }
 
   @Mutation(() => Boolean)
