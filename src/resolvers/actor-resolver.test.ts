@@ -4,7 +4,6 @@ import { testConnect } from "../test-utils/testConn";
 import { mockMutations } from "../test-utils/mockMutations";
 import { mockQueries } from "../test-utils/mockQueries";
 import { variableValues } from "../test-utils/mockVariableValues";
-import { ErrorMessage } from "../utils/error-message";
 
 let createActorResponse: any
 let conn: Sequelize
@@ -57,7 +56,6 @@ describe('Queries tests', () => {
             variableValues: tvShowId
         })
 
-        console.log(getActorsByTvShowIdResponse)
         expect(getActorsByTvShowIdResponse.data?.getActorsByTvShowId.length).toBeGreaterThan(0)
     })
 

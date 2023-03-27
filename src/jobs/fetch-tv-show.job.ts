@@ -42,7 +42,6 @@ async function _getDataFromApi(): Promise<any> {
     while (page < 10) {
         page = page + 1
         const TV_SHOWS_API_URL = `https://www.episodate.com/api/most-popular?page=${page}?`;
-        console.log(TV_SHOWS_API_URL);
         const response = await axios.get(TV_SHOWS_API_URL);
         const tvShowsData = response.data.tv_shows;
         return tvShowsData;

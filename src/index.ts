@@ -4,7 +4,7 @@ import express from 'express';
 import { sequelize } from './database';
 import { createSchema } from './utils/createSchema';
 import { fetchTvShowsJob } from './jobs/fetch-tv-show.job';
-
+require('dotenv').config();
 
 const app = express();
 
